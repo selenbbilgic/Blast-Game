@@ -167,4 +167,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xIndex: 0
   yIndex: 0
+  isMoving: 0
   cubeType: 2

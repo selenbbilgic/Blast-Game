@@ -17,7 +17,6 @@ public class Cube : Item
         if(!IsDestroyed){
             IsDestroyed = true;
             animator.SetBool("Destroy", true);
-            Debug.Log("destroyed");
             StartCoroutine(DestroyAfterAnimation());
         }
     }
@@ -25,19 +24,47 @@ public class Cube : Item
     private IEnumerator DestroyAfterAnimation()
     {
         //yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-        yield return new WaitForSeconds(0.9f);
+        yield return new WaitForSeconds(0.2f);
         Destroy(gameObject);
+    }
+
+    public List<Cube> GetAdjacentCubes()
+    {
+        List<Cube> adjacentCubes = new List<Cube>();
+
+        if (xIndex > 0 && GridManager.Instance.GetCubeAt(xIndex - 1, yIndex) != null)
+        {
+            Debug.Log("seloşş" + GridManager.Instance.GetCubeAt(xIndex - 1, yIndex).cubeType);
+            adjacentCubes.Add(GridManager.Instance.GetCubeAt(xIndex - 1, yIndex));
+        }
+
+        if (xIndex < GridManager.Instance.width - 1 && GridManager.Instance.GetCubeAt(xIndex + 1, yIndex) != null)
+        {
+            adjacentCubes.Add(GridManager.Instance.GetCubeAt(xIndex + 1, yIndex));
+        }
+
+        if (yIndex < GridManager.Instance.height - 1 && GridManager.Instance.GetCubeAt(xIndex, yIndex + 1) != null)
+        {
+            adjacentCubes.Add(GridManager.Instance.GetCubeAt(xIndex, yIndex + 1));
+        }
+
+        if (yIndex > 0 && GridManager.Instance.GetCubeAt(xIndex, yIndex - 1) != null)
+        {
+            adjacentCubes.Add(GridManager.Instance.GetCubeAt(xIndex, yIndex - 1));
+        }
+
+        return adjacentCubes;
     }
    
 }
 
 public enum CubeType{
     Blue,
-    TNTEligableBlue,
+
     Green,
-    TNTEligableGreen,
+
     Red,
-    TNTEligableRed,
+
     Yellow,
-    TNTEligableYellow,
+
 }

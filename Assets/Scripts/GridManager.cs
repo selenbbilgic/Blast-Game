@@ -6,10 +6,10 @@ using UnityEngine.Rendering;
 public class GridManager : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GridManager Instance;
+    public static GridManager Instance;
     [SerializeField]
-    private int width;
-    private int height;
+    public int width;
+    public int height;
     public float spacingX;
     public float spacingY;
     public GameObject[] itemPrefabs;
@@ -23,6 +23,8 @@ public class GridManager : MonoBehaviour
 
     [SerializeField]
     private bool isProcessingMove;
+    List<Cube> cubesToRemove = new();
+
 
     private void Awake(){
         Instance = this;
@@ -100,11 +102,128 @@ public class GridManager : MonoBehaviour
                 if(isProcessingMove){
                     return;
                 }
-                
                 selectedCube = cube;
-                selectedCube.OnTapped();
+                FindCubesToRemove(selectedCube);
+                RemoveCubes();
             }
         }
     }
+
+    public Cube GetCubeAt(int _x, int _y){
+        if(_x >= 0 && _x < width && _y >= 0 && _y < height){
+            Node node = grid[_x, _y];
+            if(node != null && node.item != null){
+                return node.item.GetComponent<Cube>();
+            }
+        }
+        return null;
+    }
+
+    #region check the cube click
+
+    void FindCubesToRemove(Cube cube){
+        cubesToRemove.Clear();
+
+        Queue<Cube> queue = new Queue<Cube>();
+        HashSet<Cube> visited = new HashSet<Cube>();
+
+        queue.Enqueue(cube);
+        visited.Add(cube);
+
+        while(queue.Count > 0){
+            Cube currentCube = queue.Dequeue();
+            cubesToRemove.Add(currentCube);
+
+            foreach (Cube adjacentCube in currentCube.GetAdjacentCubes())
+            {
+                if(!visited.Contains(adjacentCube) && currentCube.cubeType == adjacentCube.cubeType){
+                    queue.Enqueue(adjacentCube);
+                    visited.Add(adjacentCube);
+                }
+            }
+        }
+    }
+
+    void RemoveCubes(){
+        if(cubesToRemove.Count < 2) {return;}
+        isProcessingMove = true;
+        foreach ( Cube cubetoRemove in cubesToRemove)
+        {
+            int x = cubetoRemove.xIndex;
+            int y = cubetoRemove.yIndex; 
+
+            cubetoRemove.OnTapped();
+
+            grid[x, y] = new Node(true, null);
+        }
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if(grid[x, y].item == null){
+                    RefillCubes(x, y);
+                }
+            }
+        }
+
+    }
+    void RefillCubes(int x, int y){
+
+        int yOffset = 1;
+        isProcessingMove = true;
+
+        while(y + yOffset < height && grid[x, y+yOffset].item == null){
+            yOffset++;
+        }
+
+        if(y + yOffset < height && grid[x, y+yOffset].item != null){
+            Cube cubeAbove = grid[x, y+yOffset].item.GetComponent<Cube>();
+            Vector3 targetpos = new Vector3(x-spacingX, y-spacingY, cubeAbove.transform.position.z);
+
+            cubeAbove.MoveToTarget(targetpos);
+            cubeAbove.SetIndicies(x, y);
+            grid[x, y] = grid[x, y+yOffset];
+            grid[x, y+yOffset] = new Node(true, null);
+        }
+
+        if(y+yOffset == height){
+            DropCubeAtTop(x);
+        }
+
+        isProcessingMove = false;
+
+    }
+
+    void DropCubeAtTop(int _x){
+        int index = FindIndexOfLowestNull(_x);
+        int locationToMove = height-index;
+
+        GameObject newCube = Instantiate(GetPrefab("rand"), new Vector2(_x-spacingX , height-spacingY),  Quaternion.identity);
+        newCube.transform.SetParent(cubeParent.transform);
+        newCube.GetComponent<Cube>().SetIndicies(_x, index);
+
+        grid[_x, index] = new Node(true, newCube);
+        Vector3 targetPosition = new Vector3(newCube.transform.position.x, newCube.transform.position.y - locationToMove, newCube.transform.position.z);
+
+        newCube.GetComponent<Cube>().MoveToTarget(targetPosition);
+
+    }
+
+    private int FindIndexOfLowestNull(int x)
+    {
+        int lowestNull = 99;
+        for (int y = height-1; y >= 0; y--)
+        {
+            if(grid[x,y].item == null){
+                lowestNull = y;
+            }
+        }
+
+        return lowestNull;
+    }
+
+
+    #endregion
 
 }
