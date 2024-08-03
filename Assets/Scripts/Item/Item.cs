@@ -18,7 +18,7 @@ public abstract class Item : MonoBehaviour
         yIndex = _y;  
     }
 
-        public void MoveToTarget(Vector2 _targetPos){
+    public void MoveToTarget(Vector2 _targetPos){
         StartCoroutine(MoveCoroutine(_targetPos));
     }
 

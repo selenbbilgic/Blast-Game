@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     public int LoadPlayerProgress(){
         Debug.Log("loading fiest levels...");
-        return PlayerPrefs.GetInt(lastLevelKey, 1);
+        return PlayerPrefs.GetInt(lastLevelKey, 4);
     }
 
 }
