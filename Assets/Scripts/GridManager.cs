@@ -163,11 +163,14 @@ public class GridManager : MonoBehaviour
                             visited.Add(adjCube);
                         }
                     }
-                    else if (adjacentItem is TNT)
+                    else if (adjacentItem is Obstacle)
                     {
                         visited.Add(adjacentItem);
+                        if(adjacentItem is Box || adjacentItem is Vase){
+                            itemsToRemove.Add(adjacentItem);
+                        }
                     }
-                    else if (adjacentItem is Obstacle)
+                    else
                     {
                         visited.Add(adjacentItem);
                     }
@@ -197,31 +200,6 @@ public class GridManager : MonoBehaviour
                 itemtoRemove.OnDamage();
                 grid[x, y] = new Node(true, null);
             }
-            //grid[x, y] = new Node(true, null);
-
-            // if (itemToRemove is Vase vase)
-            // {
-            //     Debug.Log("Vase isDamaged before OnDamage: " + vase.isDamaged);
-            //     itemToRemove.OnDamage();
-            //     Debug.Log("Vase isDamaged after OnDamage: " + vase.isDamaged);
-
-            //     if (vase.isDamaged)
-            //     {
-            //         grid[x, y] = new Node(true, vase.gameObject);      
-            //         itemsToDestroy.Add(vase.gameObject);
-            //     }
-            //     else
-            //     {
-            //         grid[x, y] = new Node(true, null);
-            //     }
-
-                    
-            //     }
-            //     else{
-            //         
-            //     }
-            
-
         }
 
         for (int x = 0; x < width; x++)
@@ -237,17 +215,6 @@ public class GridManager : MonoBehaviour
         isProcessingMove = false;
     }
 
-    public void ReplaceVaseInGrid(Vase oldVase, GameObject newVase)
-    {
-        int x = oldVase.xIndex;
-        int y = oldVase.yIndex;
-
-        Vase newVaseComponent = newVase.GetComponent<Vase>();
-        newVaseComponent.SetIndicies(x, y);
-
-        grid[x, y] = new Node(true, newVase);
-    }
-
     void RefillCubes(int x, int y){
 
         int yOffset = 1;
@@ -259,11 +226,15 @@ public class GridManager : MonoBehaviour
 
         if(y + yOffset < height && grid[x, y+yOffset].item != null){
             Item itemAbove = grid[x, y+yOffset].item.GetComponent<Item>();
-            Vector3 targetpos = new Vector3(x-spacingX, y-spacingY, itemAbove.transform.position.z);
-            itemAbove.MoveToTarget(targetpos);
-            itemAbove.SetIndicies(x, y);
-            grid[x, y] = grid[x, y+yOffset];
-            grid[x, y+yOffset] = new Node(true, null);
+            if(itemAbove is not Stone){
+                Debug.Log(itemAbove);
+                Vector3 targetpos = new Vector3(x-spacingX, y-spacingY, itemAbove.transform.position.z);
+                itemAbove.MoveToTarget(targetpos);
+                itemAbove.SetIndicies(x, y);
+                grid[x, y] = grid[x, y+yOffset];
+                grid[x, y+yOffset] = new Node(true, null);
+            }
+            
         }
 
         if(y+yOffset == height){
@@ -290,14 +261,19 @@ public class GridManager : MonoBehaviour
 
     private int FindIndexOfLowestNull(int x)
     {
-        int lowestNull = 99;
+        int lowestNull = height + 1;
         for (int y = height-1; y >= 0; y--)
         {
-            if(grid[x,y].item == null){
+            var currentItem = grid[x, y].item;
+
+            if(currentItem == null){
                 lowestNull = y;
             }
-        }
 
+            else if(currentItem.GetComponent<Item>() is Stone){
+                return lowestNull;
+            }
+        }
         return lowestNull;
     }
 
