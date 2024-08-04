@@ -54,34 +54,13 @@ public class GridManager : MonoBehaviour
                 GameObject item = Instantiate(GetPrefab(itemType), position, Quaternion.identity);
                 item.transform.SetParent(cubeParent.transform);
 
-                Debug.Log(item);
-
-                if (item.GetComponent<Cube>() != null)
+                if (item.GetComponent<Item>() != null)
                 {
-                    item.GetComponent<Cube>().SetIndicies(x, y);
+                    item.GetComponent<Item>().SetIndicies(x, y);
                 }
                 grid[x, y] = new Node(true, item);
 
             }
-        }
-    }
-
-    GameObject GetPrefab(string itemType)
-    {
-        switch (itemType)
-        {
-            case "r": return itemPrefabs[0]; 
-            case "g": return itemPrefabs[1]; 
-            case "b": return itemPrefabs[2]; 
-            case "y": return itemPrefabs[3]; 
-            case "TNT": return itemPrefabs[8];
-            case "bo": return itemPrefabs[9]; 
-            case "s": return itemPrefabs[10]; 
-            case "v": return itemPrefabs[11];
-            case "rand":
-                int randIndex = Random.Range(0, 4);
-                return itemPrefabs[randIndex];
-            default: return null;
         }
     }
 
@@ -114,7 +93,7 @@ public class GridManager : MonoBehaviour
                     isProcessingMove = true;
 
                     if(itemsToRemove.Count > 4) {
-                        selectedCube.OnTapped();
+                        selectedCube.OnDamage();
                         itemsToRemove.Remove(selectedCube);
                         CreateTNT();
                     }
@@ -122,7 +101,7 @@ public class GridManager : MonoBehaviour
                 else if (item is TNT){
                     TNT tnt = (TNT)item;
                     selectedCube = tnt;
-                    tnt.OnTapped();
+                    tnt.OnDamage();
                     itemsToRemove.Clear();
                     FindItemsToExplode(tnt);
                 }
@@ -143,7 +122,7 @@ public class GridManager : MonoBehaviour
                 if(x>=0 && x<width && y>=0 && y<height){
                     Item item = GetItemAt(x,y);
                     if(item != null && !itemsToRemove.Contains(item)){
-
+ 
                         if(item is TNT && item != tnt){
                             FindItemsToExplode((TNT)item);
                         }
@@ -197,54 +176,51 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public List<Item> GetAdjacentItems(int xIndex, int yIndex)
-    {
-        List<Item> adjacentItems = new List<Item>();
-
-        if (xIndex > 0 && GetItemAt(xIndex - 1, yIndex) != null)
-        {
-            adjacentItems.Add(GetItemAt(xIndex - 1, yIndex));
-        }
-
-        if (xIndex < width - 1 && GetItemAt(xIndex + 1, yIndex) != null)
-        {
-            adjacentItems.Add(GetItemAt(xIndex + 1, yIndex));
-        }
-
-        if (yIndex < height - 1 && GetItemAt(xIndex, yIndex + 1) != null)
-        {
-            adjacentItems.Add(GetItemAt(xIndex, yIndex + 1));
-        }
-
-        if (yIndex > 0 && GetItemAt(xIndex, yIndex - 1) != null)
-        {
-            adjacentItems.Add(GetItemAt(xIndex, yIndex - 1));
-        }
-
-        return adjacentItems;
-    }
-    public Item GetItemAt(int _x, int _y){
-        if(_x >= 0 && _x < width && _y >= 0 && _y < height){
-            Node node = grid[_x, _y];
-            if(node != null && node.item != null){
-                return node.item.GetComponent<Item>();
-            }
-        }
-        return null;
-    }
 
     void RemoveItems(){
 
-        List<TNT> tnts = new();
-
         foreach ( Item itemtoRemove in itemsToRemove)
         {
-
             int x = itemtoRemove.xIndex;
             int y = itemtoRemove.yIndex; 
-            itemtoRemove.OnTapped();
-            Debug.Log(x + "selennenenenne nullinggg" + y);
-            grid[x, y] = new Node(true, null);
+
+            if(itemtoRemove is Vase vase){
+                if (!vase.isDamaged){
+                    itemtoRemove.OnDamage();
+                }
+                else{
+                    itemtoRemove.OnDamage();
+                    grid[x, y] = new Node(true, null);
+                }
+            }
+            else{
+                itemtoRemove.OnDamage();
+                grid[x, y] = new Node(true, null);
+            }
+            //grid[x, y] = new Node(true, null);
+
+            // if (itemToRemove is Vase vase)
+            // {
+            //     Debug.Log("Vase isDamaged before OnDamage: " + vase.isDamaged);
+            //     itemToRemove.OnDamage();
+            //     Debug.Log("Vase isDamaged after OnDamage: " + vase.isDamaged);
+
+            //     if (vase.isDamaged)
+            //     {
+            //         grid[x, y] = new Node(true, vase.gameObject);      
+            //         itemsToDestroy.Add(vase.gameObject);
+            //     }
+            //     else
+            //     {
+            //         grid[x, y] = new Node(true, null);
+            //     }
+
+                    
+            //     }
+            //     else{
+            //         
+            //     }
+            
 
         }
 
@@ -261,15 +237,15 @@ public class GridManager : MonoBehaviour
         isProcessingMove = false;
     }
 
-    void CreateTNT(){
+    public void ReplaceVaseInGrid(Vase oldVase, GameObject newVase)
+    {
+        int x = oldVase.xIndex;
+        int y = oldVase.yIndex;
 
-        GameObject tnt = Instantiate(GetPrefab("TNT"), new Vector2(selectedCube.xIndex - spacingX , selectedCube.yIndex - spacingY), Quaternion.identity);
-        tnt.transform.SetParent(cubeParent.transform);
-        tnt.GetComponent<TNT>().SetIndicies(selectedCube.xIndex, selectedCube.yIndex);
-        grid[selectedCube.xIndex, selectedCube.yIndex] = new Node(true, tnt);
+        Vase newVaseComponent = newVase.GetComponent<Vase>();
+        newVaseComponent.SetIndicies(x, y);
 
-        Debug.Log("TNT is crearted!!!!!!");
-
+        grid[x, y] = new Node(true, newVase);
     }
 
     void RefillCubes(int x, int y){
@@ -325,7 +301,70 @@ public class GridManager : MonoBehaviour
         return lowestNull;
     }
 
+    void CreateTNT(){
+
+        GameObject tnt = Instantiate(GetPrefab("TNT"), new Vector2(selectedCube.xIndex - spacingX , selectedCube.yIndex - spacingY), Quaternion.identity);
+        tnt.transform.SetParent(cubeParent.transform);
+        tnt.GetComponent<TNT>().SetIndicies(selectedCube.xIndex, selectedCube.yIndex);
+        grid[selectedCube.xIndex, selectedCube.yIndex] = new Node(true, tnt);
+
+    }
+
+    public List<Item> GetAdjacentItems(int xIndex, int yIndex)
+    {
+        List<Item> adjacentItems = new List<Item>();
+
+        if (xIndex > 0 && GetItemAt(xIndex - 1, yIndex) != null)
+        {
+            adjacentItems.Add(GetItemAt(xIndex - 1, yIndex));
+        }
+
+        if (xIndex < width - 1 && GetItemAt(xIndex + 1, yIndex) != null)
+        {
+            adjacentItems.Add(GetItemAt(xIndex + 1, yIndex));
+        }
+
+        if (yIndex < height - 1 && GetItemAt(xIndex, yIndex + 1) != null)
+        {
+            adjacentItems.Add(GetItemAt(xIndex, yIndex + 1));
+        }
+
+        if (yIndex > 0 && GetItemAt(xIndex, yIndex - 1) != null)
+        {
+            adjacentItems.Add(GetItemAt(xIndex, yIndex - 1));
+        }
+
+        return adjacentItems;
+    }
+    public Item GetItemAt(int _x, int _y){
+        if(_x >= 0 && _x < width && _y >= 0 && _y < height){
+            Node node = grid[_x, _y];
+            if(node != null && node.item != null){
+                return node.item.GetComponent<Item>();
+            }
+        }
+        return null;
+    }
+
+    GameObject GetPrefab(string itemType)
+    {
+        switch (itemType)
+        {
+            case "r": return itemPrefabs[0]; 
+            case "g": return itemPrefabs[1]; 
+            case "b": return itemPrefabs[2]; 
+            case "y": return itemPrefabs[3]; 
+            case "TNT": return itemPrefabs[8];
+            case "bo": return itemPrefabs[9]; 
+            case "s": return itemPrefabs[10]; 
+            case "v": return itemPrefabs[11];
+            case "v2": return itemPrefabs[12];
+            case "rand":
+                int randIndex = Random.Range(0, 4);
+                return itemPrefabs[randIndex];
+            default: return null;
+        }
+    }
 
     #endregion
-
 }

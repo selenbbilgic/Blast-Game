@@ -100,4 +100,6 @@ MonoBehaviour:
   xIndex: 0
   yIndex: 0
   isMoving: 0
-  hitPoints: 0
+  isDamaged: 0
+  damagedVasePrefab: {fileID: 5035851189357232359, guid: dc14292b744cb4f7ca8a76b98c90e6f4, type: 3}
+  damagedVaseSprite: {fileID: 21300000, guid: 2289791ae6f694421ba43aecca0dd2f5, type: 3}

@@ -41,5 +41,6 @@ public abstract class Item : MonoBehaviour
 
     }
 
-    public abstract void OnTapped();
+    public abstract void OnDamage();
+    
 }

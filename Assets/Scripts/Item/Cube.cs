@@ -13,7 +13,7 @@ public class Cube : Item
         animator = GetComponent<Animator>();
     }
 
-    public override void OnTapped(){
+    public override void OnDamage(){
         if(!IsDestroyed){
             IsDestroyed = true;
             animator.SetBool("Destroy", true);
