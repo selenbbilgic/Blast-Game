@@ -40,7 +40,7 @@ public class GridManager : MonoBehaviour
     void InitializeGrid(){
         grid = new Node[width, height];
         spacingX = (float)(width-1)/2;
-        spacingY = (float)((height-1)/2) +1;
+        spacingY = (float)((height-1)/2) +3;
 
         for (int y = 0; y  < height; y++)
         {
@@ -85,11 +85,14 @@ public class GridManager : MonoBehaviour
                 if(isProcessingMove){
                     return;
                 }
+                
                 if(item is Cube){
                     selectedCube = (Cube)item;
                     FindCubesToRemove(selectedCube);
 
                     if(itemsToRemove.Count < 2) {return;}
+                    GameManager.Instance.UpdateMoves();
+
                     isProcessingMove = true;
 
                     if(itemsToRemove.Count > 4) {
@@ -102,6 +105,8 @@ public class GridManager : MonoBehaviour
                     TNT tnt = (TNT)item;
                     selectedCube = tnt;
                     tnt.OnDamage();
+                    GameManager.Instance.UpdateMoves();
+
                     itemsToRemove.Clear();
                     FindItemsToExplode(tnt);
                 }
@@ -179,6 +184,9 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region item dropping
 
     void RemoveItems(){
 
@@ -193,11 +201,13 @@ public class GridManager : MonoBehaviour
                 }
                 else{
                     itemtoRemove.OnDamage();
+                    GameManager.Instance.UpdateItems(itemtoRemove);
                     grid[x, y] = new Node(true, null);
                 }
             }
             else{
                 itemtoRemove.OnDamage();
+                GameManager.Instance.UpdateItems(itemtoRemove);
                 grid[x, y] = new Node(true, null);
             }
         }
@@ -258,6 +268,10 @@ public class GridManager : MonoBehaviour
         newCube.GetComponent<Cube>().MoveToTarget(targetPosition);
 
     }
+
+    #endregion
+
+    #region helpers
 
     private int FindIndexOfLowestNull(int x)
     {
