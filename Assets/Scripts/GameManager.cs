@@ -7,16 +7,20 @@ using System.Linq;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+//    private CelebrationView celebrationView;
+//    private NavigationManager navigationManager;
     public GameObject welcomeCanvas;
     public TMP_Text levelsTxt;
     private int currentLevel;
     public LevelData currentLevelData;
     private const string lastLevelKey = "last_level";
 
+    public bool isGameEnded;
+
     public int boxCount = 0;
     public int stoneCount = 0;
     public int vaseCount = 0;
-
     public int moves;
 
     private void Awake(){
@@ -34,6 +38,8 @@ public class GameManager : MonoBehaviour
 
         CalculateGoals();
         moves = currentLevelData.move_count;
+
+        isGameEnded = false;
     } 
 
     public void UpdateMoves(){
@@ -50,6 +56,16 @@ public class GameManager : MonoBehaviour
         if(item is Vase){
             vaseCount--;
         }
+
+        if(boxCount+stoneCount+vaseCount == 0){
+            WinGame();
+        }
+    }
+
+    void WinGame(){
+        Debug.Log("isndiee win game");
+        CelebrationView.Instance.StartCelebration();
+        //NavigationManager.Instance.NavigateTo("MainScene");
     }
 
     void CalculateGoals(){
