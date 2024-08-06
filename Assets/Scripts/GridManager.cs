@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build.Content;
 using UnityEngine;
-using UnityEngine.Rendering;
+using System.Linq;
 public class GridManager : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -17,7 +16,7 @@ public class GridManager : MonoBehaviour
     private Node[,] grid;
     public GameObject[] gridGO;
     public GameObject cubeParent;
-    public GameObject obstacleParent;
+
     [SerializeField]
     private Item selectedCube;
 
@@ -27,7 +26,15 @@ public class GridManager : MonoBehaviour
 
 
     private void Awake(){
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            // DontDestroyOnLoad(gameObject); // Remove this line
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start(){
@@ -95,10 +102,11 @@ public class GridManager : MonoBehaviour
 
                     isProcessingMove = true;
 
-                    if(itemsToRemove.Count > 4) {
-                        selectedCube.OnDamage();
-                        itemsToRemove.Remove(selectedCube);
-                        CreateTNT();
+                    int cubeCount = itemsToRemove.OfType<Cube>().Count();
+                    if (cubeCount >= 5) {
+                            selectedCube.OnDamage();
+                            itemsToRemove.Remove(selectedCube);
+                            CreateTNT();
                     }
                 }
                 else if (item is TNT){
@@ -349,6 +357,7 @@ public class GridManager : MonoBehaviour
             case "s": return itemPrefabs[10]; 
             case "v": return itemPrefabs[11];
             case "v2": return itemPrefabs[12];
+            case "t": return itemPrefabs[13]; 
             case "rand":
                 int randIndex = Random.Range(0, 4);
                 return itemPrefabs[randIndex];

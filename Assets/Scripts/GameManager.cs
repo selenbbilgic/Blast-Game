@@ -23,9 +23,16 @@ public class GameManager : MonoBehaviour
     public int vaseCount = 0;
     public int moves;
 
-    private void Awake(){
-        Instance = this;
-        
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start(){
@@ -38,12 +45,22 @@ public class GameManager : MonoBehaviour
 
         CalculateGoals();
         moves = currentLevelData.move_count;
+        Debug.Log("seloş move count..." + moves);
 
         isGameEnded = false;
     } 
 
     public void UpdateMoves(){
         moves--;
+
+        if(moves == 0){
+            if(CheckWinState()){
+                WinGame();
+            }
+            else{
+                LoseGame();
+            }
+        }
     }
 
     public void UpdateItems(Item item){
@@ -57,15 +74,32 @@ public class GameManager : MonoBehaviour
             vaseCount--;
         }
 
-        if(boxCount+stoneCount+vaseCount == 0){
+        if(CheckWinState()){
             WinGame();
         }
     }
 
+    bool CheckWinState(){
+        if(boxCount+stoneCount+vaseCount == 0){
+            return true;
+        }
+        return false;
+    }
+
     void WinGame(){
-        Debug.Log("isndiee win game");
+        isGameEnded = true;
+        SaveProgress(currentLevel + 1);
+
         CelebrationView.Instance.StartCelebration();
-        //NavigationManager.Instance.NavigateTo("MainScene");
+    }
+
+    void LoseGame(){
+        
+        isGameEnded = true;
+        Debug.Log("failview is calling.....");
+        FailView.Instance.ShowTheCanvas();
+        Start();
+
     }
 
     void CalculateGoals(){
@@ -81,7 +115,8 @@ public class GameManager : MonoBehaviour
 
     public int LoadPlayerProgress(){
         Debug.Log("loading fiest levels...");
-        return PlayerPrefs.GetInt(lastLevelKey, 4);
+        //return PlayerPrefs.GetInt(lastLevelKey, 4);
+        return 7;
     }
 
 }

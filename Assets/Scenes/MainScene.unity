@@ -912,7 +912,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8765345184423451406, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
       propertyPath: m_Name
-      value: ButtonFrame
+      value: LevelButtonFrame
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

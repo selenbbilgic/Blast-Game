@@ -5,6 +5,8 @@ using UnityEngine;
 public class CelebrationView : MonoBehaviour
 {
     public static CelebrationView Instance;
+
+    public GameObject celebrationPanel;
     public GameObject CelebrationStar;
     public float moveDuration = 1.0f; 
     public float celebrationDuration = 2.0f;
@@ -16,9 +18,10 @@ public class CelebrationView : MonoBehaviour
         Instance = this;
     }
     public void StartCelebration(){
-        CelebrationStar.SetActive(true);
+        celebrationPanel.SetActive(true);
+
         startPosition = CelebrationStar.transform.position;
-        endPosition = startPosition + new Vector3(0, 10, 0);
+        endPosition = startPosition + new Vector3(0, 11, 0);
 
         celebrationParticles = CelebrationStar.GetComponentInChildren<ParticleSystem>();
 
@@ -38,5 +41,6 @@ public class CelebrationView : MonoBehaviour
         celebrationParticles.Play();
         yield return new WaitForSeconds(celebrationDuration); 
 
+        //NavigationManager.Instance.NavigateTo("MainScene");
     }
 }

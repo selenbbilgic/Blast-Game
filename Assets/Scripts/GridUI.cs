@@ -8,6 +8,7 @@ public class GridUI : MonoBehaviour
 {
     public static GridUI Instance;
     public GameObject gridBackgroundPrefab;
+    public GameObject LevelCanvas;
 
     public GameObject boxGoalItem; 
     public GameObject stoneGoalItem; 
@@ -53,6 +54,10 @@ public class GridUI : MonoBehaviour
         UpdateGoalItem(boxGoalItem , boxCount);
         UpdateGoalItem(stoneGoalItem, stoneCount);
         UpdateGoalItem(vaseGoalItem, vaseCount);
+
+        // if(GameManager.Instance.isGameEnded){
+        //     LevelCanvas.SetActive(false);
+        // }
         
     }
 
@@ -90,20 +95,22 @@ public class GridUI : MonoBehaviour
 
     void SetGoalItem(GameObject goalItem, int count)
     {
-        if (count > 0)
+        //if(goalItem.activeSelf){
+            if (count > 0)
         {
             goalItem.SetActive(true);
             TMP_Text countText = goalItem.GetComponentInChildren<TMP_Text>();
             if (countText != null)
             {
                 countText.text = count.ToString();
-                //checkmark.gameObject.SetActive(false);
             }
         }
         else
         {
             goalItem.SetActive(false);
         }
+        //}
+        
     }
 
     void AdjustLayout()
