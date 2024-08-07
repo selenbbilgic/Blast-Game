@@ -9,7 +9,7 @@ public class CelebrationView : MonoBehaviour
     public GameObject celebrationPanel;
     public GameObject CelebrationStar;
     public float moveDuration = 1.0f; 
-    public float celebrationDuration = 2.0f;
+    public float celebrationDuration = 3.0f;
     private Vector3 startPosition;
     private Vector3 endPosition;
     private ParticleSystem celebrationParticles;
@@ -20,27 +20,30 @@ public class CelebrationView : MonoBehaviour
     public void StartCelebration(){
         celebrationPanel.SetActive(true);
 
-        startPosition = CelebrationStar.transform.position;
-        endPosition = startPosition + new Vector3(0, 11, 0);
+        RectTransform starRectTransform = CelebrationStar.GetComponent<RectTransform>();
+
+        startPosition = starRectTransform.anchoredPosition;
+        endPosition = startPosition + new Vector3(0, 1100, 0);
 
         celebrationParticles = CelebrationStar.GetComponentInChildren<ParticleSystem>();
 
-        StartCoroutine(CelebrationSequence());
+        StartCoroutine(CelebrationSequence(starRectTransform));
     }
 
-    IEnumerator CelebrationSequence(){
-        float elapsedTime = 0;
+    IEnumerator CelebrationSequence(RectTransform starRectTransform){
+        float elapsedTime = 0f;
 
         while(elapsedTime < moveDuration){
-            CelebrationStar.transform.position = Vector3.Lerp(startPosition, endPosition, elapsedTime/moveDuration);
+            starRectTransform.anchoredPosition = Vector3.Lerp(startPosition, endPosition, elapsedTime / moveDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
+
         }
 
-        CelebrationStar.transform.position = endPosition;
+        starRectTransform.anchoredPosition = endPosition;
         celebrationParticles.Play();
         yield return new WaitForSeconds(celebrationDuration); 
 
-        //NavigationManager.Instance.NavigateTo("MainScene");
+        NavigationManager.Instance.NavigateTo("MainScene");
     }
 }

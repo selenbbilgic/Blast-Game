@@ -54,12 +54,11 @@ public class GameManager : MonoBehaviour
         moves--;
 
         if(moves == 0){
-            if(CheckWinState()){
-                WinGame();
-            }
-            else{
+            CheckWinState();
+            if(!isGameEnded){
                 LoseGame();
             }
+            
         }
     }
 
@@ -74,20 +73,17 @@ public class GameManager : MonoBehaviour
             vaseCount--;
         }
 
-        if(CheckWinState()){
+    }
+
+    public void CheckWinState(){
+        if(boxCount+stoneCount+vaseCount == 0){
+            isGameEnded = true;
             WinGame();
         }
     }
 
-    bool CheckWinState(){
-        if(boxCount+stoneCount+vaseCount == 0){
-            return true;
-        }
-        return false;
-    }
-
     void WinGame(){
-        isGameEnded = true;
+        
         SaveProgress(currentLevel + 1);
 
         CelebrationView.Instance.StartCelebration();
@@ -109,14 +105,17 @@ public class GameManager : MonoBehaviour
     }
 
     public void SaveProgress(int levelNum){
+        if(levelNum > 10){
+            levelNum = 1;
+        }
         PlayerPrefs.SetInt(lastLevelKey, levelNum);
         PlayerPrefs.Save();
     }
 
     public int LoadPlayerProgress(){
         Debug.Log("loading fiest levels...");
-        //return PlayerPrefs.GetInt(lastLevelKey, 4);
-        return 7;
+        //return PlayerPrefs.GetInt(lastLevelKey, 1);
+        return 1;
     }
 
 }

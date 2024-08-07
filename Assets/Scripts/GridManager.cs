@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Security.Cryptography;
+using Unity.VisualScripting.Dependencies.Sqlite;
 public class GridManager : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -12,6 +14,7 @@ public class GridManager : MonoBehaviour
     public float spacingX;
     public float spacingY;
     public GameObject[] itemPrefabs;
+    public Sprite[] TNTEligibleSprites;
     private string[] gridToBuild;
     private Node[,] grid;
     public GameObject[] gridGO;
@@ -29,7 +32,6 @@ public class GridManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // DontDestroyOnLoad(gameObject); // Remove this line
         }
         else
         {
@@ -37,17 +39,19 @@ public class GridManager : MonoBehaviour
         }
     }
 
+
     void Start(){
         width = GameManager.Instance.currentLevelData.grid_width;
         height = GameManager.Instance.currentLevelData.grid_height;
         gridToBuild = GameManager.Instance.currentLevelData.grid;
         InitializeGrid();
+        
     }
 
     void InitializeGrid(){
         grid = new Node[width, height];
         spacingX = (float)(width-1)/2;
-        spacingY = (float)((height-1)/2) +3;
+        spacingY = (float)((height-1)/2) + 3;
 
         for (int y = 0; y  < height; y++)
         {
@@ -68,13 +72,14 @@ public class GridManager : MonoBehaviour
                 grid[x, y] = new Node(true, item);
 
             }
-        }
+        }      
     }
 
     void Update(){
         if(Input.GetMouseButtonDown(0)){
             SelectCube();
         }
+        
     }
 
     #region check the item click
@@ -192,6 +197,29 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    void CheckTNTEligibility(){
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if(grid[x,y] != null){
+                    Item item = grid[x,y].item.GetComponent<Item>();
+                    if(item is Cube cube){
+                        if(!cube.isTntEligible){
+                            FindCubesToRemove(cube);
+
+                            int cubeCount = itemsToRemove.OfType<Cube>().Count();
+                            if (cubeCount >= 5) {
+                                cube.ChangeSprite();
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+
     #endregion
 
     #region item dropping
@@ -231,6 +259,10 @@ public class GridManager : MonoBehaviour
             }
         }
         isProcessingMove = false;
+        
+       
+
+        GameManager.Instance.CheckWinState();
     }
 
     void RefillCubes(int x, int y){
@@ -260,6 +292,7 @@ public class GridManager : MonoBehaviour
         }
 
         isProcessingMove = false;
+        
     }
 
     void DropCubeAtTop(int _x){

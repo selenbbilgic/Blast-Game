@@ -9,6 +9,9 @@ public class FailView : MonoBehaviour
     public static FailView Instance;
     public GameObject FailCanvas;
 
+    public AudioClip failureSound;
+    private AudioSource audioSource;
+
     public bool shouldNavigateToMain = false;
     public bool shouldTryAgain = false;
 
@@ -18,9 +21,14 @@ public class FailView : MonoBehaviour
     private void Awake(){
         Instance = this;
         canvasGroup = FailCanvas.GetComponent<CanvasGroup>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void ShowTheCanvas(){
+        if (failureSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(failureSound); 
+        }
         StartCoroutine(FadeInCanvas());
     }
 

@@ -8,9 +8,30 @@ public class Cube : Item
 
     private Animator animator;
     private bool IsDestroyed = false;
+    private SpriteRenderer spriteRenderer;
+    public Sprite TntEligibleSprite; 
+    public bool isTntEligible;
 
     void Start(){
         animator = GetComponent<Animator>();
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer==null)
+        {
+            Debug.LogError("No SpriteRenderer component found on this gameObject.");
+        }
+        isTntEligible = false;
+        
+    }
+
+    public void ChangeSprite(){
+        isTntEligible = true;
+        if (spriteRenderer != null && TntEligibleSprite != null)
+        {
+            spriteRenderer.sprite = TntEligibleSprite;
+            spriteRenderer.enabled = false;
+            spriteRenderer.enabled = true;
+        }
     }
 
     public override void OnDamage(){
@@ -31,13 +52,13 @@ public class Cube : Item
    
 }
 
-public enum CubeType{
-    Blue,
+public enum CubeType {
+    Blue = 1,
 
-    Green,
+    Green = 2,
 
-    Red,
+    Red = 3,
 
-    Yellow,
+    Yellow = 4,
 
 }

@@ -23,7 +23,7 @@ public class TNT : Item
     private IEnumerator DestroyAfterAnimation()
     {
         //yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.3f);
         Destroy(gameObject);
     }
 
