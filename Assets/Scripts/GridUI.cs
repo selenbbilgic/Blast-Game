@@ -137,22 +137,11 @@ public class GridUI : MonoBehaviour
 
         GameObject bg = Instantiate(gridBackgroundPrefab, transform);
         RectTransform rt = bg.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(GridManager.Instance.width * 100, GridManager.Instance.height*300); 
+        rt.SetAsFirstSibling(); 
 
-        float gridWidth = GridManager.Instance.width;
-        float gridHeight = GridManager.Instance.height;
-
-        float scaleFactor = 0.19f;
-        float ytresh = (float)gridHeight/4;
-
-        rt.localScale = new Vector3(gridWidth * scaleFactor, gridHeight * scaleFactor, 1);
-        rt.anchoredPosition = new Vector2(bg.transform.position.x, bg.transform.position.y - (float)((gridHeight-1)/2) + 3) * 80;
-
-
-
-        rt.SetAsFirstSibling();
-
-        Debug.Log("grid background is created");
     }
+
 
 }
     

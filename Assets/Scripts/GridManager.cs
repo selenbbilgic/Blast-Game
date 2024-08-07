@@ -85,12 +85,11 @@ public class GridManager : MonoBehaviour
     #region check the item click
     void SelectCube()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if(!GameManager.Instance.isGameEnded){
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-        Debug.Log("selen1.");
         if(hit.collider != null)
         {
-            Debug.Log("selen2");
             Item item = hit.collider.gameObject.GetComponent<Item>();
             if(item != null){
                 
@@ -126,6 +125,7 @@ public class GridManager : MonoBehaviour
             }
 
             RemoveItems();
+        }
         }
     }
 
@@ -238,12 +238,14 @@ public class GridManager : MonoBehaviour
                 else{
                     itemtoRemove.OnDamage();
                     GameManager.Instance.UpdateItems(itemtoRemove);
+                    GameManager.Instance.CheckWinState();
                     grid[x, y] = new Node(true, null);
                 }
             }
             else{
                 itemtoRemove.OnDamage();
                 GameManager.Instance.UpdateItems(itemtoRemove);
+                GameManager.Instance.CheckWinState();
                 grid[x, y] = new Node(true, null);
             }
         }
@@ -262,7 +264,7 @@ public class GridManager : MonoBehaviour
         
        
 
-        GameManager.Instance.CheckWinState();
+        
     }
 
     void RefillCubes(int x, int y){
@@ -277,7 +279,6 @@ public class GridManager : MonoBehaviour
         if(y + yOffset < height && grid[x, y+yOffset].item != null){
             Item itemAbove = grid[x, y+yOffset].item.GetComponent<Item>();
             if(itemAbove is not Stone){
-                Debug.Log(itemAbove);
                 Vector3 targetpos = new Vector3(x-spacingX, y-spacingY, itemAbove.transform.position.z);
                 itemAbove.MoveToTarget(targetpos);
                 itemAbove.SetIndicies(x, y);

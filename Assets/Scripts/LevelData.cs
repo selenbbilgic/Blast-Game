@@ -32,12 +32,10 @@ private static LevelManager _instance;
 
     public void LoadLevels()
     {
-        Debug.Log("loading all levels...");
         string path = Path.Combine(Application.streamingAssetsPath, levelsDirectory);
         string[] files = Directory.GetFiles(path, "*.json");
 
         levels = files.Select(file => JsonUtility.FromJson<LevelData>(File.ReadAllText(file))).ToArray();
-        Debug.Log("loaded all levels...");
     }
 
     public LevelData GetLevel(int levelNumber)

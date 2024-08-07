@@ -10,11 +10,10 @@ public class GameManager : MonoBehaviour
 
 //    private CelebrationView celebrationView;
 //    private NavigationManager navigationManager;
-    public GameObject welcomeCanvas;
-    public TMP_Text levelsTxt;
-    private int currentLevel;
+
+    
+    public int currentLevel;
     public LevelData currentLevelData;
-    private const string lastLevelKey = "last_level";
 
     public bool isGameEnded;
 
@@ -22,6 +21,7 @@ public class GameManager : MonoBehaviour
     public int stoneCount = 0;
     public int vaseCount = 0;
     public int moves;
+    private const string lastLevelKey = "last_level";
 
     private void Awake()
     {
@@ -36,18 +36,21 @@ public class GameManager : MonoBehaviour
     }
 
     void Start(){
-        Debug.Log("GameManager Start");
 
         currentLevel = LoadPlayerProgress();
-        currentLevelData = LevelManager.Instance.GetLevel(currentLevel);
-
-        levelsTxt.text = "Level " + currentLevel.ToString();
+        if(currentLevel<=10){
+            currentLevelData = LevelManager.Instance.GetLevel(currentLevel);
+        }
+        else{
+            currentLevelData = LevelManager.Instance.GetLevel(1);
+        }
+        
 
         CalculateGoals();
         moves = currentLevelData.move_count;
-        Debug.Log("seloş move count..." + moves);
 
         isGameEnded = false;
+
     } 
 
     public void UpdateMoves(){
@@ -92,7 +95,6 @@ public class GameManager : MonoBehaviour
     void LoseGame(){
         
         isGameEnded = true;
-        Debug.Log("failview is calling.....");
         FailView.Instance.ShowTheCanvas();
         Start();
 
@@ -105,17 +107,16 @@ public class GameManager : MonoBehaviour
     }
 
     public void SaveProgress(int levelNum){
-        if(levelNum > 10){
-            levelNum = 1;
-        }
         PlayerPrefs.SetInt(lastLevelKey, levelNum);
         PlayerPrefs.Save();
     }
 
     public int LoadPlayerProgress(){
-        Debug.Log("loading fiest levels...");
-        //return PlayerPrefs.GetInt(lastLevelKey, 1);
-        return 1;
-    }
 
+        // I did not put any restart button at the end of the game since it is not mentioned in the guide. 
+        // You can restart the game by swapping the return lines below.
+
+        return PlayerPrefs.GetInt(lastLevelKey, 1);
+        //return 1;
+    }
 }

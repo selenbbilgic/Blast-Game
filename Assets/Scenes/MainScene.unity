@@ -764,6 +764,7 @@ GameObject:
   - component: {fileID: 843413675}
   - component: {fileID: 843413674}
   - component: {fileID: 843413678}
+  - component: {fileID: 843413679}
   m_Layer: 5
   m_Name: WelcomeCanvas
   m_TagString: Untagged
@@ -867,6 +868,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad78ec9d61dfb4b80b2760366a0a8303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &843413679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843413673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b7f013a92ec34ed0aff4d3a4cdb7f4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  welcomeCanvas: {fileID: 843413673}
+  levelsTxt: {fileID: 394978928}
 --- !u!1 &1940942536
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,8 +911,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 226c7cc4619b24301ac3db48c270778b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  welcomeCanvas: {fileID: 843413673}
-  levelsTxt: {fileID: 394978928}
+  currentLevel: 0
   isGameEnded: 0
   boxCount: 0
   stoneCount: 0
@@ -932,23 +946,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2547585140481353416, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2547585140481353416, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 843413678}
+      objectReference: {fileID: 843413679}
     - target: {fileID: 2547585140481353416, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2547585140481353416, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: NavigateTo
+      value: onStartButtonTapped
       objectReference: {fileID: 0}
     - target: {fileID: 2547585140481353416, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: NavigationManager, Assembly-CSharp
+      value: WelcomeView, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2547585140481353416, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
@@ -1042,6 +1056,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelButtonFrame
       objectReference: {fileID: 0}
+    - target: {fileID: 9137619723970999341, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9137619723970999341, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9137619723970999341, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 843413679}
+    - target: {fileID: 9137619723970999341, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9137619723970999341, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: onStartButtonTapped
+      objectReference: {fileID: 0}
+    - target: {fileID: 9137619723970999341, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WelcomeView, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 9137619723970999341, guid: bb2db3ad01db7444d890e952a89a5a57, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -1056,7 +1098,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
+  - {fileID: 1940942538}
   - {fileID: 843413677}
   - {fileID: 8744589}
-  - {fileID: 1940942538}
   - {fileID: 511741365}
